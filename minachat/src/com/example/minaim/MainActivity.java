@@ -79,9 +79,9 @@ import com.example.minam.util.MinaUtil;
 
 public class MainActivity extends Activity implements Callback {
 	private ClientHandler ch;
-	private LinearLayout sline; // ¶¯Ì¬Ìí¼ÓÁÄÌì¼ÇÂ¼
-	int timestamp; // ¼ÇÂ¼µ±Ç°Ê±¼ä
-	TextView people_num; // ¼ÇÂ¼ÓÃ»§ÊýÁ¿
+	private LinearLayout sline; // ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼
+	int timestamp; // ï¿½ï¿½Â¼ï¿½ï¿½Ç°Ê±ï¿½ï¿½
+	TextView people_num; // ï¿½ï¿½Â¼ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
 	private SocketConnector connector;
 	private IoFilter filter;
 	private SocketAddress soketAddress;
@@ -108,22 +108,22 @@ public class MainActivity extends Activity implements Callback {
 		// /---------------------
 		init();
 		super.onCreate(savedInstanceState);
-		// ³õÊ¼»¯½çÃæ¿Ø¼þ
+		// ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½
 		setContentView(R.layout.activity_main);
 		text = new EditText(this);
 		bar = (ProgressBar) findViewById(R.id.progress);
 		String useName = MinaUtil.hasName(this);
 		Boolean hasName = TextUtils.isEmpty(useName);
 		if (hasName) {
-			// Toast.makeText(this,"ÇëÊäÈëÐÕÃû", 1).show();
+			// Toast.makeText(this,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", 1).show();
 			Builder dialog = new Builder(this);
 
-			dialog.setTitle("¸ø×Ô¼ºÒ»¸öÏìÁÁµÄêÇ³Æ°É");
+			dialog.setTitle("ç»™è‡ªå·±ä¸€ä¸ªå“äº®çš„åç§°å§");
 
 			// .setIcon(android.R.drawable.ic_dialog_info)
 			dialog.setView(text);
 
-			dialog.setPositiveButton("¿ªÊ¼ÁÄÌì",
+			dialog.setPositiveButton("å¼€å§‹èŠå¤©",
 					new DialogInterface.OnClickListener() {
 
 						@Override
@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements Callback {
 							// TODO Auto-generated method stub
 							String name = text.getText().toString();
 							if (TextUtils.isEmpty(name)) {
-								Toast.makeText(MainActivity.this, "Äã»¹Ã»ÓÐÊäÈëêÇ³ÆÄØ",
+								Toast.makeText(MainActivity.this, "ä½ è¿˜æ²¡æœ‰è¾“å…¥æ˜µç§°å‘¢",
 										1).show();
 
 								try {
@@ -139,7 +139,7 @@ public class MainActivity extends Activity implements Callback {
 											.getSuperclass()
 											.getDeclaredField("mShowing");
 									field.setAccessible(true);
-									// ÉèÖÃmShowingÖµ£¬ÆÛÆ­androidÏµÍ³
+									// ï¿½ï¿½ï¿½ï¿½mShowingÖµï¿½ï¿½ï¿½ï¿½Æ­androidÏµÍ³
 									field.set(dialog, false);
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -156,7 +156,7 @@ public class MainActivity extends Activity implements Callback {
 											.getSuperclass()
 											.getDeclaredField("mShowing");
 									field.setAccessible(true);
-									// ÉèÖÃmShowingÖµ£¬ÆÛÆ­androidÏµÍ³
+									// ï¿½ï¿½ï¿½ï¿½mShowingÖµï¿½ï¿½ï¿½ï¿½Æ­androidÏµÍ³
 									field.set(dialog, true);
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -165,7 +165,7 @@ public class MainActivity extends Activity implements Callback {
 							}
 
 						}
-					}).setNegativeButton("²ÐÈÌ¾Ü¾ø",
+					}).setNegativeButton("æ®‹å¿æ‹’ç»",
 					new DialogInterface.OnClickListener() {
 
 						@Override
@@ -197,7 +197,7 @@ public class MainActivity extends Activity implements Callback {
 		sendBtn = (Button) findViewById(R.id.sendBtn);
 		sendContent = (EditText) findViewById(R.id.sendContent);
 
-		IntentFilter mFilter = new IntentFilter(); // ´úÂë×¢²á¹ã²¥
+		IntentFilter mFilter = new IntentFilter(); // ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ã²¥
 		mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(mReceiver, mFilter);
 
@@ -226,7 +226,7 @@ public class MainActivity extends Activity implements Callback {
 	@Override
 	public void disconnected(IoSession session) {
 		// TODO Auto-generated method stub
-		Log.i("³Ì²Å", "³Ì²Å");
+		Log.i("ï¿½Ì²ï¿½", "ï¿½Ì²ï¿½");
 		if (isNetWork) {
 
 			start();
@@ -249,7 +249,7 @@ public class MainActivity extends Activity implements Callback {
 	}
 
 	private Object msg_obj;
-	// ÓÃÓÚË¢ÐÂtextview, ¶ÔÓÚUIµÄ¸ü¸ÄÒª·ÅÔÚÏß³ÌÖÐ
+	// ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½textview, ï¿½ï¿½ï¿½ï¿½UIï¿½Ä¸ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½
 	private final Runnable mUpdateUITimerTask = new Runnable() {
 		public void run() {
 			// logger.debug("Session recv...");
@@ -299,9 +299,9 @@ public class MainActivity extends Activity implements Callback {
 					
 					
 					
-					Time t=new Time(); // or Time t=new Time("GMT+8"); ¼ÓÉÏTime Zone×ÊÁÏ¡£  
+					Time t=new Time(); // or Time t=new Time("GMT+8"); ï¿½ï¿½ï¿½ï¿½Time Zoneï¿½ï¿½ï¿½Ï¡ï¿½  
 					
-					t.setToNow(); // È¡µÃÏµÍ³Ê±¼ä¡£ 
+					t.setToNow(); // È¡ï¿½ï¿½ÏµÍ³Ê±ï¿½ä¡£ 
 					
 	                View view =   getLayoutInflater().inflate(R.layout.receivemsgview,null);
 	                TextView tv_time = (TextView) view.findViewById(R.id.msgtime);
@@ -324,7 +324,7 @@ public class MainActivity extends Activity implements Callback {
 					int num = qonRespCmd.getNum();
 					bar.setVisibility(View.GONE);
 					people_num.setVisibility(View.VISIBLE);
-					people_num.setText("µ±Ç°ÔÚÏßÈËÊý(" + num + ")");
+					people_num.setText("å½“å‰åœ¨çº¿äººæ•°(" + num + ")");
 
 					break;
 				}
@@ -347,7 +347,7 @@ public class MainActivity extends Activity implements Callback {
 		if (keyCode == KeyEvent.KEYCODE_BACK
 				&& event.getAction() == KeyEvent.ACTION_DOWN) {
 			if ((System.currentTimeMillis() - exitTime) > 2000) {
-				Toast.makeText(getApplicationContext(), "ÔÙ°´Ò»´ÎÍË³ö³ÌÐò",
+				Toast.makeText(getApplicationContext(), "å†æŒ‰ä¸€æ¬¡é€€å‡ºç¨‹åº",
 						Toast.LENGTH_SHORT).show();
 				exitTime = System.currentTimeMillis();
 			} else {
@@ -359,11 +359,11 @@ public class MainActivity extends Activity implements Callback {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	// ÅÐ¶Ï°æ±¾¸ñÊ½,Èç¹û°æ±¾ > 2.3,¾ÍÊÇÓÃÏàÓ¦µÄ³ÌÐò½øÐÐ´¦Àí,ÒÔ±ãÓ°Ïì·ÃÎÊÍøÂç
+	// ï¿½Ð¶Ï°æ±¾ï¿½ï¿½Ê½,ï¿½ï¿½ï¿½ï¿½æ±¾ > 2.3,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½,ï¿½Ô±ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	@TargetApi(9)
 	private static void init() {
-		String strVer = android.os.Build.VERSION.RELEASE; // »ñµÃµ±Ç°ÏµÍ³°æ±¾
-		strVer = strVer.substring(0, 3).trim(); // ½ØÈ¡Ç°3¸ö×Ö·û 2.3.3×ª»»³É2.3
+		String strVer = android.os.Build.VERSION.RELEASE; // ï¿½ï¿½Ãµï¿½Ç°ÏµÍ³ï¿½æ±¾
+		strVer = strVer.substring(0, 3).trim(); // ï¿½ï¿½È¡Ç°3ï¿½ï¿½ï¿½Ö·ï¿½ 2.3.3×ªï¿½ï¿½ï¿½ï¿½2.3
 		float fv = Float.valueOf(strVer);
 		if (fv > 2.3) {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -375,36 +375,36 @@ public class MainActivity extends Activity implements Callback {
 		}
 	}
 
-	// ´¦ÀíÍÆËÍÂß¼­
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
 
 	@SuppressLint("NewApi")
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void show(String msg) {
-		NotificationCompat.Builder mBuilder = // Notification µÄ¼æÈÝÀà
+		NotificationCompat.Builder mBuilder = // Notification ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
 		new NotificationCompat.Builder(this)
 
-		.setSmallIcon(R.drawable.ic_launcher) // ÈôÃ»ÓÐÉèÖÃlargeicon£¬´ËÎª×ó±ßµÄ´óicon£¬ÉèÖÃÁËlargeicon£¬ÔòÎªÓÒÏÂ½ÇµÄÐ¡icon£¬ÎÞÂÛÔõÑù£¬¶¼Ó°ÏìNotifications
-												// areaÏÔÊ¾µÄÍ¼±ê
+		.setSmallIcon(R.drawable.ic_launcher) // ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½largeiconï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ßµÄ´ï¿½iconï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½largeiconï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Â½Çµï¿½Ð¡iconï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½Notifications
+												// areaï¿½ï¿½Ê¾ï¿½ï¿½Í¼ï¿½ï¿½
 
-				.setContentTitle("ÇàÄê¾¯ÎÀ¾ü") // ±êÌâ
+				.setContentTitle("ï¿½ï¿½ï¿½ê¾¯ï¿½ï¿½ï¿½ï¿½") // ï¿½ï¿½ï¿½ï¿½
 
-				.setContentText(msg) // ÕýÎÄ
+				.setContentText(msg) // ï¿½ï¿½ï¿½ï¿½
 
-				// .setNumber(3) //ÉèÖÃÐÅÏ¢ÌõÊý
+				// .setNumber(3) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½
 
-				// .setContentInfo("3") //×÷ÓÃÍ¬ÉÏ£¬ÉèÖÃÐÅÏ¢µÄÌõÊý
+				// .setContentInfo("3") //ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-				// .setLargeIcon(smallicon) //largeicon£¬
+				// .setLargeIcon(smallicon) //largeiconï¿½ï¿½
 
-				.setDefaults(Notification.DEFAULT_SOUND)// ÉèÖÃÉùÒô£¬´ËÎªÄ¬ÈÏÉùÒô
+				.setDefaults(Notification.DEFAULT_SOUND)// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªÄ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-				// .setVibrate(vT) //ÉèÖÃÕð¶¯£¬´ËÕð¶¯Êý×éÎª£ºlong vT[]={300,100,300,100};
-				// »¹¿ÉÒÔÉèÖÃµÆ¹â.setLights(argb, onMs, offMs)
+				// .setVibrate(vT) //ï¿½ï¿½ï¿½ï¿½ï¿½ð¶¯£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½long vT[]={300,100,300,100};
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÆ¹ï¿½.setLights(argb, onMs, offMs)
 
-				.setOngoing(false) // trueÊ¹notification±äÎªongoing£¬ÓÃ»§²»ÄÜÊÖ¶¯Çå³ý£¬ÀàËÆQQ,false»òÕß²»ÉèÖÃÔòÎªÆÕÍ¨µÄÍ¨Öª
+				.setOngoing(false) // trueÊ¹notificationï¿½ï¿½Îªongoingï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½QQ,falseï¿½ï¿½ï¿½ß²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Í¨ï¿½ï¿½Í¨Öª
 
-				.setAutoCancel(true); // µã»÷Ö®ºó×Ô¶¯ÏûÊ§
+				.setAutoCancel(true); // ï¿½ï¿½ï¿½Ö®ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ê§
 
 		Intent resultIntent = new Intent(this, ResultActivity.class);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -422,7 +422,7 @@ public class MainActivity extends Activity implements Callback {
 	}
 
 	/**
-	 * Óëserver¶Ë½¨Á¢Á¬½Ó£¬²¢·µ»ØÁ¬½Ó½á¹û
+	 * ï¿½ï¿½serverï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½
 	 * 
 	 */
 	public Boolean initCon() {
@@ -476,7 +476,7 @@ public class MainActivity extends Activity implements Callback {
 				timer1.cancel();
 			}
 			timer1 = new Timer(true);
-			timer1.schedule(task, 0, reConnect); // ÑÓÊ±0msºóÖ´ÐÐ£¬30000msÖ´ÐÐÒ»´Î
+			timer1.schedule(task, 0, reConnect); // ï¿½ï¿½Ê±0msï¿½ï¿½Ö´ï¿½Ð£ï¿½30000msÖ´ï¿½ï¿½Ò»ï¿½ï¿½
 
 		} else {
 			if (timer1 != null) {
@@ -486,9 +486,9 @@ public class MainActivity extends Activity implements Callback {
 			reConnect = 0;
 			tv_sever.setVisibility(View.GONE);
 			sendContent.setText("");
-			session = future.getSession(); // ´´½¨Á´½Ósession
+			session = future.getSession(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½session
 
-			// Ã¿¸ôÈýÊ®Ãë¸üÐÂµ±Ç°ÈËÊý
+			// Ã¿ï¿½ï¿½ï¿½ï¿½Ê®ï¿½ï¿½ï¿½ï¿½Âµï¿½Ç°ï¿½ï¿½ï¿½ï¿½
 			final Handler handler = new Handler() {
 				@Override
 				public void handleMessage(Message msg) {
@@ -518,14 +518,14 @@ public class MainActivity extends Activity implements Callback {
 			};
 
 			Timer timer = new Timer(true);
-			timer.schedule(task, 0, 30000); // ÑÓÊ±0msºóÖ´ÐÐ£¬30000msÖ´ÐÐÒ»´Î
+			timer.schedule(task, 0, 30000); // ï¿½ï¿½Ê±0msï¿½ï¿½Ö´ï¿½Ð£ï¿½30000msÖ´ï¿½ï¿½Ò»ï¿½ï¿½
 
 		}
 
 	}
 
 	private BroadcastReceiver mReceiver = /**
-	 * @author Administrator ¼àÌýÍøÂç×´¿ö·¢Éú±ä»¯
+	 * @author Administrator ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä»¯
 	 */
 	new BroadcastReceiver() {
 
@@ -533,16 +533,16 @@ public class MainActivity extends Activity implements Callback {
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-				Log.d("mark", "ÍøÂç×´Ì¬ÒÑ¾­¸Ä±ä");
+				Log.d("mark", "ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½Ñ¾ï¿½ï¿½Ä±ï¿½");
 				ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo info = connectivityManager.getActiveNetworkInfo();
 				if (info != null && info.isAvailable()) {
 					tv_net.setVisibility(View.GONE);
 					String name = info.getTypeName();
-					Log.i("mark", "µ±Ç°ÍøÂçÃû³Æ£º" + name);
+					Log.i("mark", "ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½" + name);
 					start();
 				} else {
-					Log.d("mark", "Ã»ÓÐ¿ÉÓÃÍøÂç");
+					Log.d("mark", "Ã»ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 					tv_net.setVisibility(View.VISIBLE);
 					tv_sever.setVisibility(View.GONE);
 				}
@@ -551,14 +551,14 @@ public class MainActivity extends Activity implements Callback {
 	};
 
 	/*
-	 * ¼àÌýÈí¼üÅÌ·¢ËÍ°´Å¥,´¦ÀíÏûÏ¢·¢ËÍÊÂ¼þ
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì·ï¿½ï¿½Í°ï¿½Å¥,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 	 */
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
-				/* Òþ²ØÈí¼üÅÌ */
+				/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 				InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				if (inputMethodManager.isActive()) {
 					inputMethodManager.hideSoftInputFromWindow(
@@ -583,8 +583,8 @@ public class MainActivity extends Activity implements Callback {
 				sendContent.setText("");
 				
 				
-				Time t=new Time(); // or Time t=new Time("GMT+8"); ¼ÓÉÏTime Zone×ÊÁÏ¡£  
-				t.setToNow(); // È¡µÃÏµÍ³Ê±¼ä¡£  
+				Time t=new Time(); // or Time t=new Time("GMT+8"); ï¿½ï¿½ï¿½ï¿½Time Zoneï¿½ï¿½ï¿½Ï¡ï¿½  
+				t.setToNow(); // È¡ï¿½ï¿½ÏµÍ³Ê±ï¿½ä¡£  
 				
 				
 				
