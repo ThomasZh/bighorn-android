@@ -7,6 +7,7 @@ import java.net.SocketAddress;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.younguard.bighorn.R;
 import net.younguard.bighorn.broadcast.cmd.BroadcastCommandParser;
 import net.younguard.bighorn.broadcast.cmd.CommandTag;
 import net.younguard.bighorn.broadcast.cmd.MsgPangResp;
@@ -14,6 +15,8 @@ import net.younguard.bighorn.broadcast.cmd.MsgPingReq;
 import net.younguard.bighorn.broadcast.cmd.MsgPongResp;
 import net.younguard.bighorn.broadcast.cmd.QueryOnlineNumReq;
 import net.younguard.bighorn.broadcast.cmd.QueryOnlineNumResp;
+import net.younguard.bighorn.broadcast.cmd.RegisterNotifyTokenReq;
+import net.younguard.bighorn.broadcast.cmd.SocketCloseReq;
 import net.younguard.bighorn.comm.Command;
 import net.younguard.bighorn.comm.codec.TlvPackageCodecFactory;
 import net.younguard.bighorn.comm.tlv.TlvObject;
@@ -73,11 +76,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.jpush.android.api.JPushInterface;
 
 import com.example.minaim.ClientHandler.Callback;
 import com.example.minam.util.MinaUtil;
 
-public class MainActivity extends Activity implements Callback {
+public class MainActivity extends BaseActivity implements Callback {
 	private ClientHandler ch;
 	private LinearLayout sline; // ��̬��������¼
 	int timestamp; // ��¼��ǰʱ��
@@ -202,6 +206,9 @@ public class MainActivity extends Activity implements Callback {
 		registerReceiver(mReceiver, mFilter);
 
 		// start(true);
+		
+		JPushInterface.setDebugMode(true);
+		JPushInterface.init(this);
 
 	}
 
@@ -252,6 +259,7 @@ public class MainActivity extends Activity implements Callback {
 	// ����ˢ��textview, ����UI�ĸ���Ҫ�����߳���
 	private final Runnable mUpdateUITimerTask = new Runnable() {
 		public void run() {
+			String  name1 = MinaUtil.getRegisterId(MainActivity.this);
 			// logger.debug("Session recv...");
 
 			if (msg_obj != null && msg_obj instanceof TlvObject) {
@@ -527,28 +535,39 @@ public class MainActivity extends Activity implements Callback {
 	private BroadcastReceiver mReceiver = /**
 	 * @author Administrator ��������״�������仯
 	 */
-	new BroadcastReceiver() {
+			new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-				Log.d("mark", "����״̬�Ѿ��ı�");
+				Log.d("mark", "    ״̬ Ѿ  ı ");
 				ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 				NetworkInfo info = connectivityManager.getActiveNetworkInfo();
 				if (info != null && info.isAvailable()) {
 					tv_net.setVisibility(View.GONE);
 					String name = info.getTypeName();
-					Log.i("mark", "��ǰ�������ƣ�" + name);
+					Log.i("mark", "  ǰ       ƣ " + name);
 					start();
+					RegisterNotifyTokenReq req = 	new 	RegisterNotifyTokenReq(DatetimeUtil.currentTimestamp(), MinaUtil.getUniqueDeviceId(MainActivity.this),MinaUtil.getRegisterId(MainActivity.this) , MinaUtil.hasName(MainActivity.this));
+					TlvObject msgTlv = null;
+					try {
+						msgTlv = BroadcastCommandParser.encode(req);
+					} catch (UnsupportedEncodingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					session.write(msgTlv);
+
 				} else {
-					Log.d("mark", "û�п�������");
+					Log.d("mark", "û п       ");
 					tv_net.setVisibility(View.VISIBLE);
 					tv_sever.setVisibility(View.GONE);
 				}
 			}
 		}
 	};
+
 
 	/*
 	 * ��������̷��Ͱ�ť,������Ϣ�����¼�
@@ -601,6 +620,32 @@ public class MainActivity extends Activity implements Callback {
 		}
 		 return super.dispatchKeyEvent(event); 
 
+	}
+	@Override
+	public void goBack() {
+		// TODO Auto-generated method stub
+		super.goBack();
+		timestamp = DatetimeUtil.currentTimestamp();
+		SocketCloseReq  close = new SocketCloseReq(timestamp);
+		TlvObject msgTlv = null;
+		try {
+			msgTlv = BroadcastCommandParser.encode(close);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		session.write(msgTlv);
+
+		
+		session.close(true);
+		Log.i("程才","关闭");
+	}
+	@Override
+	public void goForward() {
+		// TODO Auto-generated method stub
+		super.goForward();
+		start();
+		Log.i("程才","开启");
 	}
 
 }

@@ -1,10 +1,14 @@
 package com.example.minam.util;
 
+import java.util.UUID;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.widget.EditText;
 
@@ -23,7 +27,7 @@ public class MinaUtil {
 		return false;
 	}
 	
-	/**ÅĞ¶ÏÓÃ»§ÊÇ·ñ´æÈëêÇ³Æ
+	/**ï¿½Ğ¶ï¿½ï¿½Ã»ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½Ç³ï¿½
 	 * @return
 	 */
 	public static String hasName(Activity activity){
@@ -31,6 +35,32 @@ public class MinaUtil {
 		String name  = edit.getString("name","");
 		return name;
 	}
+	 public static String getUniqueDeviceId(Context ctx) {
+	        TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
+
+	        String id = tm.getDeviceId();
+	        if (id != null) {
+	            return UUID.nameUUIDFromBytes(id.getBytes()).toString();
+	        }
+
+	        return null;
+	    }
+	
+	 
+		public static void saveRegisterId(Context context, String registerId){
+			SharedPreferences settings = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+			Editor editor = settings.edit();
+			editor.putString("RegisterId", registerId);
+			editor.commit();
+		}
+		
+		//è·å–å¤´åƒæ›´æ–°çš„æ—¶é—´
+		public static String getRegisterId(Context context){
+			SharedPreferences settings = context.getSharedPreferences("User", Context.MODE_PRIVATE);
+			String registerId= settings.getString("RegisterId", "");
+			
+			return registerId;
+		}
 	
 
 }
