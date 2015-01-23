@@ -140,6 +140,10 @@ public class MainActivity extends BaseActivity implements Callback {
 								SharedPreferences share = getPreferences(Context.MODE_PRIVATE);
 								Editor editor = share.edit();
 								editor.putString("name", name);
+								
+								IntentFilter mFilter = new IntentFilter(); 
+								mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+								registerReceiver(mReceiver, mFilter);
 
 								editor.commit();
 								try {
@@ -171,6 +175,12 @@ public class MainActivity extends BaseActivity implements Callback {
 			dialog.show();
 
 		}
+		else{
+			
+			IntentFilter mFilter = new IntentFilter(); 
+			mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+			registerReceiver(mReceiver, mFilter);
+		}
 		people_num = (TextView) findViewById(R.id.people);
 		tv_net = (TextView) findViewById(R.id.network);
 		tv_sever = (TextView) findViewById(R.id.server);
@@ -187,9 +197,6 @@ public class MainActivity extends BaseActivity implements Callback {
 		sendBtn = (Button) findViewById(R.id.sendBtn);
 		sendContent = (EditText) findViewById(R.id.sendContent);
 
-		IntentFilter mFilter = new IntentFilter(); 
-		mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		registerReceiver(mReceiver, mFilter);
 
 		// start(true);
 
@@ -380,14 +387,10 @@ public class MainActivity extends BaseActivity implements Callback {
 		return future.isConnected();
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		// start(true);
-	}
+
 
 	public void start() {
+		Log.i("成才","调用啊");
 		isNetWork = MinaUtil.isNetworkConnected(this);
 
 		if (!initCon() && isNetWork) {
@@ -420,7 +423,7 @@ public class MainActivity extends BaseActivity implements Callback {
 			timer1 = new Timer(true);
 			timer1.schedule(task, 0, reConnect); 
 
-		} else {
+		} else if(initCon()){
 			if (timer1 != null) {
 
 				timer1.cancel();
@@ -586,7 +589,18 @@ public class MainActivity extends BaseActivity implements Callback {
 		return super.dispatchKeyEvent(event);
 
 	}
-
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		JPushInterface.onPause(this);
+	}
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		JPushInterface.onResume(this);
+	}
 	@Override
 	public void goBack() {
 		// TODO Auto-generated method stub
@@ -597,18 +611,19 @@ public class MainActivity extends BaseActivity implements Callback {
 		TlvObject msgTlv = null;
 		try {
 			msgTlv = BroadcastCommandParser.encode(close);
-		} catch (UnsupportedEncodingException e) {
+			session.write(msgTlv);
+			session.close(true);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		session.write(msgTlv);
 
-		session.close(true);
 	}
 
 	@Override
 	public void goForward() {
 		// TODO Auto-generated method stub
+		
 		super.goForward();
 		isForward = true;
 		start();
