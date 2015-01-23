@@ -93,6 +93,7 @@ public class MainActivity extends BaseActivity implements Callback {
 	private EditText et_dialog;
 	private ProgressBar bar;
 	private IoSession session;
+	private Boolean isForward =true;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -100,7 +101,7 @@ public class MainActivity extends BaseActivity implements Callback {
 		// /---------------------
 
 		// /---------------------
-		init();
+		initView();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		et_dialog = new EditText(this);
@@ -110,7 +111,7 @@ public class MainActivity extends BaseActivity implements Callback {
 		if (hasName) {
 			Builder dialog = new Builder(this);
 
-			dialog.setTitle("give me  a beautiful name!");
+			dialog.setTitle("give you  a beautiful name!");
 
 			dialog.setView(et_dialog);
 
@@ -196,6 +197,10 @@ public class MainActivity extends BaseActivity implements Callback {
 		JPushInterface.init(this);
 
 	}
+	
+	
+	
+	
 
 	@Override
 	public void connected() {
@@ -218,9 +223,12 @@ public class MainActivity extends BaseActivity implements Callback {
 	@Override
 	public void disconnected(IoSession session) {
 		// TODO Auto-generated method stub
-		if (isNetWork) {
-
-			start();
+		if(isForward){
+			
+			if (isNetWork) {
+				
+				start();
+			}
 		}
 
 	}
@@ -343,7 +351,7 @@ public class MainActivity extends BaseActivity implements Callback {
 	}
 
 	@TargetApi(9)
-	private static void init() {
+	private static void initView() {
 		String strVer = android.os.Build.VERSION.RELEASE; 
 		strVer = strVer.substring(0, 3).trim();
 		float fv = Float.valueOf(strVer);
@@ -583,6 +591,7 @@ public class MainActivity extends BaseActivity implements Callback {
 	public void goBack() {
 		// TODO Auto-generated method stub
 		super.goBack();
+		isForward =false;
 		timestamp = DatetimeUtil.currentTimestamp();
 		SocketCloseReq close = new SocketCloseReq(timestamp);
 		TlvObject msgTlv = null;
@@ -601,6 +610,7 @@ public class MainActivity extends BaseActivity implements Callback {
 	public void goForward() {
 		// TODO Auto-generated method stub
 		super.goForward();
+		isForward = true;
 		start();
 	}
 
