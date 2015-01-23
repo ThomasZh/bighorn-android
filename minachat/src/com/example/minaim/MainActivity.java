@@ -28,28 +28,20 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
-import org.slf4j.helpers.Util;
-
-import android.R.color;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -62,7 +54,6 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -71,21 +62,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.jpush.android.api.JPushInterface;
 
 import com.example.minaim.ClientHandler.Callback;
 import com.example.minam.util.MinaUtil;
+import com.example.minam.util.QueneManager;
 
 public class MainActivity extends BaseActivity implements Callback {
 	private ClientHandler ch;
-	private LinearLayout sline; // ��̬��������¼
-	int timestamp; // ��¼��ǰʱ��
-	TextView people_num; // ��¼�û�����
+	private LinearLayout sline; 
+	int timestamp; 
+	TextView people_num; 
 	private SocketConnector connector;
 	private IoFilter filter;
 	private SocketAddress soketAddress;
@@ -100,7 +90,7 @@ public class MainActivity extends BaseActivity implements Callback {
 	int reConnect = 0;
 	private Timer timer1;
 	private Boolean isCon;
-	private EditText text;
+	private EditText et_dialog;
 	private ProgressBar bar;
 	private IoSession session;
 
@@ -112,30 +102,27 @@ public class MainActivity extends BaseActivity implements Callback {
 		// /---------------------
 		init();
 		super.onCreate(savedInstanceState);
-		// ��ʼ������ؼ�
 		setContentView(R.layout.activity_main);
-		text = new EditText(this);
-		bar = (ProgressBar) findViewById(R.id.progress);
-		String useName = MinaUtil.hasName(this);
+		et_dialog = new EditText(this);
+		String useName = MinaUtil.getNameFromSD(this);
 		Boolean hasName = TextUtils.isEmpty(useName);
+		bar = (ProgressBar) findViewById(R.id.progress);
 		if (hasName) {
-			// Toast.makeText(this,"����������", 1).show();
 			Builder dialog = new Builder(this);
 
-			dialog.setTitle("给自己一个响亮的名称吧");
+			dialog.setTitle("give me  a beautiful name!");
 
-			// .setIcon(android.R.drawable.ic_dialog_info)
-			dialog.setView(text);
+			dialog.setView(et_dialog);
 
-			dialog.setPositiveButton("开始聊天",
+			dialog.setPositiveButton("chat",
 					new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							// TODO Auto-generated method stub
-							String name = text.getText().toString();
+							String name = et_dialog.getText().toString();
 							if (TextUtils.isEmpty(name)) {
-								Toast.makeText(MainActivity.this, "你还没有输入昵称呢",
+								Toast.makeText(MainActivity.this, "name is null!",
 										1).show();
 
 								try {
@@ -143,7 +130,6 @@ public class MainActivity extends BaseActivity implements Callback {
 											.getSuperclass()
 											.getDeclaredField("mShowing");
 									field.setAccessible(true);
-									// ����mShowingֵ����ƭandroidϵͳ
 									field.set(dialog, false);
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -160,7 +146,6 @@ public class MainActivity extends BaseActivity implements Callback {
 											.getSuperclass()
 											.getDeclaredField("mShowing");
 									field.setAccessible(true);
-									// ����mShowingֵ����ƭandroidϵͳ
 									field.set(dialog, true);
 								} catch (Exception e) {
 									e.printStackTrace();
@@ -169,7 +154,7 @@ public class MainActivity extends BaseActivity implements Callback {
 							}
 
 						}
-					}).setNegativeButton("残忍拒绝",
+					}).setNegativeButton("cancel",
 					new DialogInterface.OnClickListener() {
 
 						@Override
@@ -201,12 +186,12 @@ public class MainActivity extends BaseActivity implements Callback {
 		sendBtn = (Button) findViewById(R.id.sendBtn);
 		sendContent = (EditText) findViewById(R.id.sendContent);
 
-		IntentFilter mFilter = new IntentFilter(); // ����ע��㲥
+		IntentFilter mFilter = new IntentFilter(); 
 		mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(mReceiver, mFilter);
 
 		// start(true);
-		
+
 		JPushInterface.setDebugMode(true);
 		JPushInterface.init(this);
 
@@ -233,7 +218,6 @@ public class MainActivity extends BaseActivity implements Callback {
 	@Override
 	public void disconnected(IoSession session) {
 		// TODO Auto-generated method stub
-		Log.i("�̲�", "�̲�");
 		if (isNetWork) {
 
 			start();
@@ -256,10 +240,9 @@ public class MainActivity extends BaseActivity implements Callback {
 	}
 
 	private Object msg_obj;
-	// ����ˢ��textview, ����UI�ĸ���Ҫ�����߳���
 	private final Runnable mUpdateUITimerTask = new Runnable() {
 		public void run() {
-			String  name1 = MinaUtil.getRegisterId(MainActivity.this);
+			String name1 = MinaUtil.getRegisterId(MainActivity.this);
 			// logger.debug("Session recv...");
 
 			if (msg_obj != null && msg_obj instanceof TlvObject) {
@@ -281,52 +264,43 @@ public class MainActivity extends BaseActivity implements Callback {
 					MsgPongResp pongRespCmd = (MsgPongResp) respCmd;
 					String msg = pongRespCmd.getContent();
 					String name = pongRespCmd.getUsername();
-					show(name + ":" + msg);
 
-					/*LinearLayout line = new LinearLayout(MainActivity.this);
-					line.setOrientation(LinearLayout.VERTICAL);
-					RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(
-							LayoutParams.MATCH_PARENT,
-							LayoutParams.WRAP_CONTENT);
-					sline.addView(line, lp3);
-					RelativeLayout.LayoutParams lp1 = new RelativeLayout.LayoutParams(
-							200, LayoutParams.WRAP_CONTENT);
+					Time t = new Time(); // or Time t=new Time("GMT+8");
 
-					TextView tv = new TextView(MainActivity.this);
+					t.setToNow();
 
-					tv.setText(name + ":" + msg);
-					tv.setBackgroundColor(Color.GRAY);
-
-					View view = new View(MainActivity.this);
-					RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(
-							LayoutParams.MATCH_PARENT, 30);
-
-					line.setGravity(Gravity.LEFT);
-					line.addView(tv, lp1);
-					line.addView(view, lp2);*/
-					
-					
-					
-					Time t=new Time(); // or Time t=new Time("GMT+8"); ����Time Zone���ϡ�  
-					
-					t.setToNow(); // ȡ��ϵͳʱ�䡣 
-					
-	                View view =   getLayoutInflater().inflate(R.layout.receivemsgview,null);
-	                TextView tv_time = (TextView) view.findViewById(R.id.msgtime);
-	                TextView tv_name = (TextView) view.findViewById(R.id.rename);
-	                tv_name.setText(name);
-	                tv_time.setText(String.valueOf(t.hour+":"+t.minute+":"+t.second));
-	                TextView tv_content = (TextView) view.findViewById(R.id.msgcontent);
-	                tv_content.setText(msg);
-	                sline.addView(view);
-	                
+					View view = getLayoutInflater().inflate(
+							R.layout.receivemsgview, null);
+					TextView tv_time = (TextView) view
+							.findViewById(R.id.msgtime);
+					TextView tv_name = (TextView) view
+							.findViewById(R.id.rename);
+					tv_name.setText(name);
+					tv_time.setText(String.valueOf(t.hour + ":" + t.minute
+							+ ":" + t.second));
+					TextView tv_content = (TextView) view
+							.findViewById(R.id.msgcontent);
+					tv_content.setText(msg);
+					sline.addView(view);
 
 					break;
 				case CommandTag.MESSAGE_PANG_RESPONSE:
 					MsgPangResp pangRespCmd = (MsgPangResp) respCmd;
+					int seq = pangRespCmd.getSequence();
+					View view_queue = QueneManager.getGressList().get(seq);
+					view_queue.findViewById(R.id.pross)
+							.setVisibility(View.GONE);
+
+					if (view_queue.findViewById(R.id.gantan).getVisibility() == View.VISIBLE) {
+						view_queue.findViewById(R.id.gantan).setVisibility(
+								View.GONE);
+					} else {
+
+						QueneManager.getTimerList().get(seq).cancel();
+						QueneManager.getTimerList().remove(seq);
+					}
 
 					break;
-
 				case CommandTag.QUERY_ONLINE_NUMBER_RESPONSE:
 					QueryOnlineNumResp qonRespCmd = (QueryOnlineNumResp) respCmd;
 					int num = qonRespCmd.getNum();
@@ -335,6 +309,7 @@ public class MainActivity extends BaseActivity implements Callback {
 					people_num.setText("当前在线人数(" + num + ")");
 
 					break;
+
 				}
 
 			}
@@ -367,11 +342,10 @@ public class MainActivity extends BaseActivity implements Callback {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	// �жϰ汾��ʽ,����汾 > 2.3,��������Ӧ�ĳ�����д���,�Ա�Ӱ���������
 	@TargetApi(9)
 	private static void init() {
-		String strVer = android.os.Build.VERSION.RELEASE; // ��õ�ǰϵͳ�汾
-		strVer = strVer.substring(0, 3).trim(); // ��ȡǰ3���ַ� 2.3.3ת����2.3
+		String strVer = android.os.Build.VERSION.RELEASE; 
+		strVer = strVer.substring(0, 3).trim();
 		float fv = Float.valueOf(strVer);
 		if (fv > 2.3) {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -383,56 +357,8 @@ public class MainActivity extends BaseActivity implements Callback {
 		}
 	}
 
-	// ���������߼�
 
-	@SuppressLint("NewApi")
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	public void show(String msg) {
-		NotificationCompat.Builder mBuilder = // Notification �ļ�����
-
-		new NotificationCompat.Builder(this)
-
-		.setSmallIcon(R.drawable.ic_launcher) // ��û������largeicon����Ϊ��ߵĴ�icon��������largeicon����Ϊ���½ǵ�Сicon��������������Ӱ��Notifications
-												// area��ʾ��ͼ��
-
-				.setContentTitle("���꾯����") // ����
-
-				.setContentText(msg) // ����
-
-				// .setNumber(3) //������Ϣ����
-
-				// .setContentInfo("3") //����ͬ�ϣ�������Ϣ������
-
-				// .setLargeIcon(smallicon) //largeicon��
-
-				.setDefaults(Notification.DEFAULT_SOUND)// ������������ΪĬ������
-
-				// .setVibrate(vT) //�����𶯣���������Ϊ��long vT[]={300,100,300,100};
-				// ���������õƹ�.setLights(argb, onMs, offMs)
-
-				.setOngoing(false) // trueʹnotification��Ϊongoing���û������ֶ����������QQ,false���߲�������Ϊ��ͨ��֪ͨ
-
-				.setAutoCancel(true); // ���֮���Զ���ʧ
-
-		Intent resultIntent = new Intent(this, ResultActivity.class);
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-		stackBuilder.addParentStack(this);
-
-		stackBuilder.addNextIntent(resultIntent);
-		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-
-		mBuilder.setContentIntent(resultPendingIntent);
-
-		NotificationManager manager = (NotificationManager) getApplicationContext()
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		manager.notify(1000, mBuilder.build());
-	}
-
-	/**
-	 * ��server�˽������ӣ����������ӽ��
-	 * 
-	 */
+	
 	public Boolean initCon() {
 
 		connector = new NioSocketConnector();
@@ -484,7 +410,7 @@ public class MainActivity extends BaseActivity implements Callback {
 				timer1.cancel();
 			}
 			timer1 = new Timer(true);
-			timer1.schedule(task, 0, reConnect); // ��ʱ0ms��ִ�У�30000msִ��һ��
+			timer1.schedule(task, 0, reConnect); 
 
 		} else {
 			if (timer1 != null) {
@@ -494,10 +420,8 @@ public class MainActivity extends BaseActivity implements Callback {
 			reConnect = 0;
 			tv_sever.setVisibility(View.GONE);
 			sendContent.setText("");
-			session = future.getSession(); // ��������session
-
-			// ÿ����ʮ����µ�ǰ����
-			final Handler handler = new Handler() {
+			session = future.getSession(); 
+			final Handler handler_num = new Handler() {
 				@Override
 				public void handleMessage(Message msg) {
 					// TODO Auto-generated method stub
@@ -521,21 +445,35 @@ public class MainActivity extends BaseActivity implements Callback {
 					Message message = new Message();
 
 					message.what = 1;
-					handler.sendMessage(message);
+					handler_num.sendMessage(message);
 				}
 			};
 
 			Timer timer = new Timer(true);
-			timer.schedule(task, 0, 30000); // ��ʱ0ms��ִ�У�30000msִ��һ��
-
+			timer.schedule(task, 0, 30000); 
+			
+			
+			
+			RegisterNotifyTokenReq req = new RegisterNotifyTokenReq(
+					DatetimeUtil.currentTimestamp(),
+					MinaUtil.getUniqueDeviceId(MainActivity.this),
+					MinaUtil.getRegisterId(MainActivity.this),
+					MinaUtil.getNameFromSD(MainActivity.this));
+			TlvObject msgTlv = null;
+			try {
+				msgTlv = BroadcastCommandParser.encode(req);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			session.write(msgTlv);
 		}
 
 	}
 
-	private BroadcastReceiver mReceiver = /**
-	 * @author Administrator ��������״�������仯
-	 */
-			new BroadcastReceiver() {
+	private BroadcastReceiver mReceiver =
+			
+	new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -547,17 +485,8 @@ public class MainActivity extends BaseActivity implements Callback {
 				if (info != null && info.isAvailable()) {
 					tv_net.setVisibility(View.GONE);
 					String name = info.getTypeName();
-					Log.i("mark", "  ǰ       ƣ " + name);
 					start();
-					RegisterNotifyTokenReq req = 	new 	RegisterNotifyTokenReq(DatetimeUtil.currentTimestamp(), MinaUtil.getUniqueDeviceId(MainActivity.this),MinaUtil.getRegisterId(MainActivity.this) , MinaUtil.hasName(MainActivity.this));
-					TlvObject msgTlv = null;
-					try {
-						msgTlv = BroadcastCommandParser.encode(req);
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					session.write(msgTlv);
+					
 
 				} else {
 					Log.d("mark", "û п       ");
@@ -568,16 +497,14 @@ public class MainActivity extends BaseActivity implements Callback {
 		}
 	};
 
-
 	/*
-	 * ��������̷��Ͱ�ť,������Ϣ�����¼�
+	 * 绑定发送事件按钮在键盘
 	 */
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
-				/* ��������� */
 				InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				if (inputMethodManager.isActive()) {
 					inputMethodManager.hideSoftInputFromWindow(
@@ -586,10 +513,10 @@ public class MainActivity extends BaseActivity implements Callback {
 				}
 				timestamp = DatetimeUtil.currentTimestamp();
 				String sendMsgText = sendContent.getText().toString();
-				
+
 				System.out.println(sendMsgText);
 				MsgPingReq reqCmd = new MsgPingReq(timestamp,
-						MinaUtil.hasName(MainActivity.this), sendMsgText);
+						MinaUtil.getNameFromSD(MainActivity.this), sendMsgText);
 				TlvObject msgTlv = null;
 				try {
 					msgTlv = BroadcastCommandParser.encode(reqCmd);
@@ -600,33 +527,64 @@ public class MainActivity extends BaseActivity implements Callback {
 				session.write(msgTlv);
 
 				sendContent.setText("");
-				
-				
-				Time t=new Time(); // or Time t=new Time("GMT+8"); ����Time Zone���ϡ�  
-				t.setToNow(); // ȡ��ϵͳʱ�䡣  
-				
-				
-				
-                View view =   getLayoutInflater().inflate(R.layout.sendmsgview,null);
-                TextView tv_time = (TextView) view.findViewById(R.id.msgtime);
-                tv_time.setText(String.valueOf(t.hour+":"+t.minute+":"+t.second));
-                TextView tv_content = (TextView) view.findViewById(R.id.msgcontent);
-                tv_content.setText(sendMsgText);
-                sline.addView(view);
-                
-				
+
+				Time t = new Time(); 
+										
+				t.setToNow(); 
+
+				View view = getLayoutInflater().inflate(R.layout.sendmsgview,
+						null);
+				TextView tv_time = (TextView) view.findViewById(R.id.msgtime);
+				tv_time.setText(String.valueOf(t.hour + ":" + t.minute + ":"
+						+ t.second));
+				TextView tv_content = (TextView) view
+						.findViewById(R.id.msgcontent);
+				tv_content.setText(sendMsgText);
+				sline.addView(view);
+
+				QueneManager.getGressList().put(timestamp, view);
+
+				final Handler handler_timer = new Handler() {
+					@Override
+					public void handleMessage(Message msg) {
+						// TODO Auto-generated method stub
+						super.handleMessage(msg);
+						View view_queue = QueneManager.getGressList().get(
+								timestamp);
+						view_queue.findViewById(R.id.pross).setVisibility(
+								View.GONE);
+
+						view_queue.findViewById(R.id.gantan).setVisibility(
+								View.VISIBLE);
+
+					}
+
+				};
+				TimerTask task = new TimerTask() {
+					public void run() {
+						Message message = new Message();
+
+						message.what = 1;
+						handler_timer.sendMessage(message);
+					}
+				};
+
+				Timer timer = new Timer(true);
+				timer.schedule(task, 10000);
+				QueneManager.getTimerList().put(timestamp, timer);
 				return true;
 			}
 		}
-		 return super.dispatchKeyEvent(event); 
+		return super.dispatchKeyEvent(event);
 
 	}
+
 	@Override
 	public void goBack() {
 		// TODO Auto-generated method stub
 		super.goBack();
 		timestamp = DatetimeUtil.currentTimestamp();
-		SocketCloseReq  close = new SocketCloseReq(timestamp);
+		SocketCloseReq close = new SocketCloseReq(timestamp);
 		TlvObject msgTlv = null;
 		try {
 			msgTlv = BroadcastCommandParser.encode(close);
@@ -636,16 +594,14 @@ public class MainActivity extends BaseActivity implements Callback {
 		}
 		session.write(msgTlv);
 
-		
 		session.close(true);
-		Log.i("程才","关闭");
 	}
+
 	@Override
 	public void goForward() {
 		// TODO Auto-generated method stub
 		super.goForward();
 		start();
-		Log.i("程才","开启");
 	}
 
 }

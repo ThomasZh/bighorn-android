@@ -30,7 +30,7 @@ public class MinaUtil {
 	/**�ж��û��Ƿ�����ǳ�
 	 * @return
 	 */
-	public static String hasName(Activity activity){
+	public static String getNameFromSD(Activity activity){
 		SharedPreferences edit = activity.getPreferences(Context.MODE_PRIVATE);
 		String name  = edit.getString("name","");
 		return name;
