@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="red">#c0392b</color>
+    <color name="blue">#01A6E2</color>
+    <color name="background">#efeff4</color>
+    <color name="agreetext">#59ab4c</color>
+    <color name="bg_orange">#fa8f3a</color>
+    <color name="bg_half_tran">#50000000</color>
+    <color name="bg_good_thumb_add">#F0EFF4</color>
+    <color name="bg_green">#58aa4c</color>
+    <color name="gray">#cecece</color>
+    <color name="gray_text">#687261</color>
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="gray_ligth">#f0eced</color>
+    <color name="gray_ligth_second">#e7e7e7</color>
+    <color name="bg_classify_fond_gray">#8c8c8c</color>
+    <color name="bg_classify_fond_red">#db321b</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="transprent">#00000000</color>
+    <color name="tabview_color_normal">#dddbdb</color>
+    <color name="tabview_color_selected">#ff0000</color>
+    <color name="tabview_color_divider_line">#dddbdb</color>
+    <color name="activity_title_bg">#e74242</color>
+    <color name="bg_theme_divider_line">#fdf4f2</color>
+    <color name="bg_gray">#ebebeb</color>
+
+</resources>
